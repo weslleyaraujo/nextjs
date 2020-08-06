@@ -1,15 +1,23 @@
 import { NowRequest, NowResponse } from "@vercel/node";
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import Airtable from "airtable";
 
-export default (req: NowRequest, res: NowResponse) => {
+const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(
+  process.env.AIRTABLE_BASE
+);
+
+export default async (req: NowRequest, res: NowResponse) => {
   res.statusCode = 200;
   res.setHeader("Cache-Control", "s-maxage=86400");
   const now = new Date();
-  res.json({
-    date: Intl.DateTimeFormat("en-gb", {
-      hour: "numeric",
-      minute: "numeric",
-      second: "numeric",
-    }).format(now),
-  });
+  try {
+    const records = await base("Hustlers 2.0").select().all();
+    res.json({
+      date: Intl.DateTimeFormat("en-gb", {
+        hour: "numeric",
+        minute: "numeric",
+        second: "numeric",
+      }).format(now),
+      items: records.map((item) => item.fields),
+    });
+  } catch (e) {}
 };
