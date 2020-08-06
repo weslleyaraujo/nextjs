@@ -7,7 +7,7 @@ const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(
 
 export default async (req: NowRequest, res: NowResponse) => {
   res.statusCode = 200;
-  res.setHeader("Cache-Control", "s-maxage=86400");
+  res.setHeader("Cache-Control", "s-maxage=60");
   const now = new Date();
   try {
     const records = await base("Hustlers 2.0").select().all();
